@@ -29,6 +29,3 @@ while temp > 0:
         fuel = fuel + temp
 assert fuel == 50346, 'Not passed the test!'
 print('Test passed')
-
-
-# 5020494.0
