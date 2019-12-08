@@ -26,7 +26,6 @@ perm = list(product(np.arange(0,100), repeat=2))
 output=0
 i=0
 while output != goal:
-    print('i',i)
     data= data_original.copy() 
     data[1]=perm[i][0]
     data[2]=perm[i][1]
