@@ -53,7 +53,7 @@ class Intcode():
 
     def output_function(self, m1,instruction):
         self.pointer=self.pointer+2
-        output = self.data[instruction[1]] if m1==0 else self.data[1] if m1==1 else self.data[instruction[1]+self.offset]
+        output = self.data[instruction[1]] if m1==0 else instruction[1] if m1==1 else self.data[instruction[1]+self.offset]
         return output
 
     def jump_if_true(self, m1,m2,instruction):
@@ -106,9 +106,9 @@ intcode = Intcode(pointer,offset,data)
 while True:
     data = intcode.return_data
     instruction = intcode.get_data()
-    #print('Instruction',instruction)
+    # print('Instruction',instruction)
     opcode, m1, m2, m3 = intcode.prepare_instruction(instruction)
-    #print(opcode, m1, m2, m3)
+    # print(opcode, m1, m2, m3)
     if opcode==99:
         print('End!')
         break
