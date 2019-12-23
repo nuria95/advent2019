@@ -4,20 +4,21 @@ data = np.loadtxt('input.txt',delimiter=',').astype(int)
 data = np.append(data,np.zeros((100000,1),dtype=int))
 
 class Intcode():
-    def __init__2(self, pointer, offset):
+    def __init__(self, pointer, offset, data):
         self.pointer = pointer
         self.offset = offset
+        self.data = data
 
     def to_string(self, array_to_transform): #[1240] --> ['1','2','4','0']
         return [i for i in str(array_to_transform)]
 
-    def get_data(self, data):
-        string=self.to_string(data[self.pointer])
+    def get_data(self):
+        string=self.to_string(self.data[self.pointer])
         if int(string[-1])==4 or int(string[-1])==3 or int(string[-1])==9: #check if last element of instruction opcode is a 3 or 4 or 9
             length_instr = 2
         else:
             length_instr = 4  
-        return data[self.pointer:self.pointer+length_instr]
+        return self.data[self.pointer:self.pointer+length_instr]
 
     def prepare_instruction(self, instruction):
         instruction_opcode_str= self.to_string(instruction[0])
@@ -28,80 +29,83 @@ class Intcode():
 
 
     def add_function(self, m1,m2,m3, instruction):
-        value1 = data[instruction[1]] if m1==0 else instruction[1] if m1==1 else data[instruction[1]+self.offset]
-        value2 = data[instruction[2]] if m2 ==0 else instruction[2] if m2==1 else data[instruction[2]+self.offset]
+        value1 = self.data[instruction[1]] if m1==0 else instruction[1] if m1==1 else self.data[instruction[1]+self.offset]
+        value2 = self.data[instruction[2]] if m2 ==0 else instruction[2] if m2==1 else self.data[instruction[2]+self.offset]
         position = instruction[3] if m3==0 else (instruction[3]+self.offset)
         number = value1 + value2
-        data[position]=number
+        self.data[position]=number
         self.pointer=self.pointer+4
 
 
     def multiply_function(self, m1,m2,m3,instruction):
-        value1 = data[instruction[1]] if m1==0 else instruction[1] if m1==1 else data[instruction[1]+self.offset]
-        value2 = data[instruction[2]] if m2 ==0 else instruction[2] if m2==1 else data[instruction[2]+self.offset]
+        value1 = self.data[instruction[1]] if m1==0 else instruction[1] if m1==1 else self.data[instruction[1]+self.offset]
+        value2 = self.data[instruction[2]] if m2 ==0 else instruction[2] if m2==1 else self.data[instruction[2]+self.offset]
         number = value1 * value2
         position = instruction[3] if m3==0 else (instruction[3]+self.offset)
-        data[position]=number
+        self.data[position]=number
         self.pointer=self.pointer+4
 
     def input_function(self, m1, instruction):
         the_input=input('Provide me an input (give a 2): ')
         position = instruction[1] if m1==0 else (instruction[1]+self.offset)
-        data[position]=int(the_input)
+        self.data[position]=int(the_input)
         self.pointer=self.pointer+2
 
     def output_function(self, m1,instruction):
         self.pointer=self.pointer+2
-        output = data[instruction[1]] if m1==0 else data[1] if m1==1 else data[instruction[1]+self.offset]
+        output = self.data[instruction[1]] if m1==0 else self.data[1] if m1==1 else self.data[instruction[1]+self.offset]
         return output
 
     def jump_if_true(self, m1,m2,instruction):
-        parameter1 = data[instruction[1]] if m1==0 else instruction[1] if m1==1 else data[instruction[1]+self.offset]
-        parameter2 = data[instruction[2]] if m2==0 else instruction[2] if m2==1 else data[instruction[2]+self.offset]
+        parameter1 = self.data[instruction[1]] if m1==0 else instruction[1] if m1==1 else self.data[instruction[1]+self.offset]
+        parameter2 = self.data[instruction[2]] if m2==0 else instruction[2] if m2==1 else self.data[instruction[2]+self.offset]
         if parameter1!=0:
             self.pointer = parameter2
         else:
             self.pointer = self.pointer + 3
 
     def jump_if_false(self, m1,m2,instruction):
-        parameter1 = data[instruction[1]] if m1==0 else instruction[1] if m1==1 else data[instruction[1]+self.offset]
-        parameter2 = data[instruction[2]] if m2==0 else instruction[2] if m2==1 else data[instruction[2]+self.offset]
+        parameter1 = self.data[instruction[1]] if m1==0 else instruction[1] if m1==1 else self.data[instruction[1]+self.offset]
+        parameter2 = self.data[instruction[2]] if m2==0 else instruction[2] if m2==1 else self.data[instruction[2]+self.offset]
         if parameter1==0:
             self.pointer = parameter2
         else:
             self.pointer = self.pointer + 3
 
     def less_than(self, m1,m2,m3,instruction):
-        parameter1 = data[instruction[1]] if m1==0 else instruction[1] if m1==1 else data[instruction[1]+self.offset]
-        parameter2 = data[instruction[2]] if m2==0 else instruction[2] if m2==1 else data[instruction[2]+self.offset]
+        parameter1 = self.data[instruction[1]] if m1==0 else instruction[1] if m1==1 else self.data[instruction[1]+self.offset]
+        parameter2 = self.data[instruction[2]] if m2==0 else instruction[2] if m2==1 else self.data[instruction[2]+self.offset]
         position = instruction[3] if m3==0 else (instruction[3]+self.offset)
         if parameter1<parameter2:
-            data[position]=1
+            self.data[position]=1
         else:
-            data[position]=0
+            self.data[position]=0
         self.pointer = self.pointer + 4
 
     def equals_than(self, m1,m2,m3,instruction):
-        parameter1 = data[instruction[1]] if m1==0 else instruction[1] if m1==1 else data[instruction[1]+self.offset]
-        parameter2 = data[instruction[2]] if m2==0 else instruction[2] if m2==1 else data[instruction[2]+self.offset]
+        parameter1 = self.data[instruction[1]] if m1==0 else instruction[1] if m1==1 else self.data[instruction[1]+self.offset]
+        parameter2 = self.data[instruction[2]] if m2==0 else instruction[2] if m2==1 else self.data[instruction[2]+self.offset]
         position = instruction[3] if m3==0 else (instruction[3]+self.offset)
         if parameter1==parameter2:
-            data[position]=1
+            self.data[position]=1
         else:
-            data[position]=0
+            self.data[position]=0
         self.pointer = self.pointer + 4
 
     def change_offset(self, m1, instruction):
-        parameter1 = data[instruction[1]] if m1==0 else instruction[1] if m1==1 else data[instruction[1]+self.offset]
+        parameter1 = self.data[instruction[1]] if m1==0 else instruction[1] if m1==1 else self.data[instruction[1]+self.offset]
         self.offset = self.offset + parameter1
         self.pointer=self.pointer+2
+    @property
+    def return_data(self):
+        return self.data
 
 pointer = 0
 offset = 0
-intcode = Intcode(pointer,offset)
+intcode = Intcode(pointer,offset,data)
 while True:
-    
-    instruction = intcode.get_data(data)
+    data = intcode.return_data
+    instruction = intcode.get_data()
     #print('Instruction',instruction)
     opcode, m1, m2, m3 = intcode.prepare_instruction(instruction)
     #print(opcode, m1, m2, m3)
