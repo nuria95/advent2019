@@ -46,7 +46,7 @@ def input_function(instruction,pointer):
 
 def output_function(m1,instruction,pointer):
     pointer=pointer+2
-    return data[instruction[1]] if m1==0 else data[1], pointer
+    return data[instruction[1]] if m1==0 else instruction[1], pointer
 
 def jump_if_true(m1,m2,instruction,pointer):
     parameter1 = data[instruction[1]] if m1==0 else instruction[1]

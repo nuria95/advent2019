@@ -43,7 +43,7 @@ def input_function(instruction):
 
 def output_function(m1,instruction):
 
-    return data[instruction[1]] if m1==0 else data[1] 
+    return data[instruction[1]] if m1==0 else instruction[1] 
 
 #Replace values of data:
 n = 4
